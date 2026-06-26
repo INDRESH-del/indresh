@@ -91,6 +91,42 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 0.75rem;
 }
 
+.section-title-3d {
+  font-size: clamp(2rem, 4.5vw, 2.85rem);
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  margin-bottom: 1rem;
+  background: linear-gradient(180deg, #1e3a8a 0%, #2563eb 45%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  filter:
+    drop-shadow(0 1px 0 rgba(30, 58, 138, 0.85))
+    drop-shadow(0 2px 0 rgba(37, 99, 235, 0.65))
+    drop-shadow(0 3px 0 rgba(59, 130, 246, 0.45))
+    drop-shadow(0 6px 16px rgba(15, 23, 42, 0.18));
+}
+
+.section-title-3d span {
+  background: linear-gradient(135deg, var(--accent) 0%, #22d3ee 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.section-title-3d::after {
+  content: '';
+  display: block;
+  width: 72px;
+  height: 4px;
+  margin: 0.85rem auto 0;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--primary-light), var(--accent));
+  box-shadow: 0 2px 12px rgba(6, 182, 212, 0.4);
+}
+
 .section-subtitle {
   text-align: center;
   color: var(--text-light);
@@ -287,7 +323,8 @@ header {
   align-items: center;
   justify-content: center;
   text-align: center;
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(37, 99, 235, 0.75) 100%),
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.55) 0%, rgba(37, 99, 235, 0.35) 100%),
     url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1920&q=80') center/cover no-repeat;
   color: #fff;
   padding: 4rem 5%;
@@ -297,6 +334,7 @@ header {
 .hero-content {
   max-width: 800px;
   animation: fadeInUp 1s ease;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.4);
 }
 
 .hero-badge {
@@ -2045,29 +2083,37 @@ form.hidden {
 
 .org-founder-card {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  text-align: center;
+  gap: 1rem;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 1.75rem 2rem;
+  padding: 2rem 2rem 1.75rem;
   box-shadow: var(--shadow);
-  flex: 1;
+  flex: 1 1 320px;
   min-width: 280px;
-  max-width: 520px;
+  max-width: 580px;
 }
 
 .org-founder-avatar {
   flex-shrink: 0;
-  width: 90px;
-  height: 90px;
+  width: clamp(88px, 14vw, 104px);
+  height: clamp(88px, 14vw, 104px);
+  margin: 0 auto 0.25rem;
   border-radius: 50%;
   background: linear-gradient(180deg, #1e40af, #06b6d4);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.25rem;
+  font-size: clamp(2rem, 4vw, 2.5rem);
   color: #fff;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.28);
+}
+
+.org-founder-info {
+  width: 100%;
 }
 
 .org-founder-info h3 {
@@ -2094,7 +2140,14 @@ form.hidden {
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
-  max-width: 260px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem 2rem;
+  box-shadow: var(--shadow);
+  flex: 1 1 280px;
+  min-width: 280px;
+  max-width: 360px;
   color: var(--text-light);
   font-size: 0.875rem;
   line-height: 1.6;
@@ -2105,6 +2158,41 @@ form.hidden {
   font-size: 1.75rem;
   color: var(--primary-light);
   margin-top: 0.15rem;
+}
+
+.org-cert-title {
+  color: var(--secondary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.65rem;
+}
+
+.org-cert-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.org-cert-list li {
+  position: relative;
+  padding-left: 1rem;
+  margin-bottom: 0.35rem;
+  font-size: 0.875rem;
+}
+
+.org-cert-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--primary-light);
+}
+
+.org-cert-list li:last-child {
+  margin-bottom: 0;
 }
 
 .org-connector {
@@ -2246,6 +2334,38 @@ form.hidden {
   margin: 0;
 }
 
+@media (max-width: 991px) {
+  .org-founder-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .org-founder-card,
+  .org-cert-badge {
+    width: 100%;
+    max-width: 520px;
+  }
+
+  .org-cert-badge {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .org-cert-badge i {
+    margin-top: 0;
+    margin-bottom: 0.25rem;
+  }
+
+  .org-cert-list {
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+    text-align: left;
+  }
+}
+
 @media (max-width: 900px) {
   .org-levels {
     grid-template-columns: 1fr;
@@ -2257,28 +2377,21 @@ form.hidden {
   .org-connector {
     display: none;
   }
-
-  .org-founder-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .org-founder-card {
-    max-width: 100%;
-  }
-
-  .org-cert-badge {
-    max-width: 100%;
-    justify-content: center;
-    text-align: center;
-  }
 }
 
-@media (max-width: 480px) {
-  .org-founder-card {
-    flex-direction: column;
-    text-align: center;
-    padding: 1.5rem;
+@media (max-width: 576px) {
+  .org-founder-card,
+  .org-cert-badge {
+    padding: 1.5rem 1.25rem;
+    max-width: 100%;
+  }
+
+  .org-founder-info h3 {
+    font-size: 1.1rem;
+  }
+
+  .org-founder-bio {
+    font-size: 0.85rem;
   }
 }
 
