@@ -12,6 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="icon" href="images/logo.png" type="image/png">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -19,13 +20,7 @@
   <header>
     <nav class="navbar">
       <a href="index.html" class="logo">
-        <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <rect x="5" y="7" width="30" height="20" rx="2" stroke="#3b82f6" stroke-width="2"/>
-          <path d="M14 31h12" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
-          <circle cx="20" cy="17" r="5" stroke="#3b82f6" stroke-width="1.5"/>
-          <path d="M20 14v6M17 17h6" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/>
-          <path d="M26 12l3-2v4l-3-2" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        <img src="images/logo.png" alt="Mumbai A2Z IT Solution" class="logo-img" width="44" height="44">
         <span class="logo-text">Mumbai <span>A2Z</span> IT Solution</span>
       </a>
 
@@ -250,7 +245,10 @@
   <footer>
     <div class="footer-grid">
       <div class="footer-brand">
-        <a href="index.html" class="logo"><i class="fas fa-tools"></i> Mumbai A2Z IT Solution</a>
+        <a href="index.html" class="logo">
+          <img src="images/logo.png" alt="Mumbai A2Z IT Solution" class="logo-img logo-img--sm" width="40" height="40">
+          <span class="logo-text">Mumbai <span>A2Z</span> IT Solution</span>
+        </a>
         <p>Your trusted partner for all IT repair and support needs.</p>
         <div class="social-links">
           <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
@@ -287,13 +285,17 @@
       <div class="footer-col">
         <h4>Contact</h4>
         <ul>
-          <li><a href="tel:+919004576059">+919004576059</a></li>
+          <li><a href="tel:+919004576059" class="btn-call btn-call--footer"><i class="fas fa-phone"></i> Call Now</a></li>
           <li><a href="mailto:mumbaia2zitsolution@gmail.com">mumbaia2zitsolution@gmail.com</a></li>
           <li><a href="contact.html">Contact Us</a></li>
         </ul>
       </div>
     </div>
   </footer>
+
+  <a href="tel:+919004576059" class="call-fab" aria-label="Call us">
+    <i class="fas fa-phone"></i>
+  </a>
 
   <a href="https://wa.me/919004576059?text=Hi%20Mumbai A2Z IT Solution,%20I%20need%20IT%20repair%20help" class="whatsapp" aria-label="Chat on WhatsApp" target="_blank" rel="noopener">
     <i class="fab fa-whatsapp"></i>

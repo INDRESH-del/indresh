@@ -54,6 +54,11 @@ function initScrollAnimations() {
 
   if (!animatedElements.length) return;
 
+  if (window.matchMedia('(max-width: 768px)').matches) {
+    animatedElements.forEach(el => el.classList.add('visible'));
+    return;
+  }
+
   const observer = new IntersectionObserver(
     entries => {
       entries.forEach(entry => {
@@ -63,7 +68,7 @@ function initScrollAnimations() {
         }
       });
     },
-    { threshold: 0.15, rootMargin: '0px 0px -50px 0px' }
+    { threshold: 0.1, rootMargin: '0px 0px -20px 0px' }
   );
 
   animatedElements.forEach(el => observer.observe(el));
@@ -189,27 +194,159 @@ function initFormHandlers() {
   const forms = document.querySelectorAll('form[data-form]');
 
   forms.forEach(form => {
-    form.addEventListener('submit', e => {
+    if (!form.querySelector('[name="botcheck"]')) {
+      const honeypot = document.createElement('input');
+      honeypot.type = 'checkbox';
+      honeypot.name = 'botcheck';
+      honeypot.tabIndex = -1;
+      honeypot.autocomplete = 'off';
+      honeypot.hidden = true;
+      form.appendChild(honeypot);
+    }
+
+    form.addEventListener('submit', async e => {
       e.preventDefault();
-
-      const successMsg = form.parentElement.querySelector('.form-success');
-      if (successMsg) {
-        form.classList.add('hidden');
-        successMsg.classList.add('show');
-      } else {
-        const btn = form.querySelector('button[type="submit"]');
-        const originalText = btn.textContent;
-        btn.textContent = 'Sent Successfully!';
-        btn.style.background = '#16a34a';
-        form.reset();
-
-        setTimeout(() => {
-          btn.textContent = originalText;
-          btn.style.background = '';
-        }, 3000);
-      }
+      await handleFormSubmit(form);
     });
   });
+}
+
+function isFormConfigured() {
+  const key = window.FORM_CONFIG?.accessKey;
+  return Boolean(key && key !== 'YOUR_WEB3FORMS_ACCESS_KEY_HERE');
+}
+
+function getFormPayload(form) {
+  const formType = form.getAttribute('data-form');
+  const data = Object.fromEntries(new FormData(form).entries());
+
+  const subject =
+    formType === 'booking'
+      ? `New Repair Booking - ${data.name || 'Client'}`
+      : `New Contact Message - ${data.subject || data.name || 'Client'}`;
+
+  const message =
+    formType === 'booking'
+      ? [
+          'New repair booking request from the website.',
+          '',
+          `Name: ${data.name || '-'}`,
+          `Email: ${data.email || '-'}`,
+          `Phone: ${data.phone || '-'}`,
+          `Service: ${data.service || '-'}`,
+          `Preferred Date: ${data.date || '-'}`,
+          `Service Type: ${data.type || '-'}`,
+          '',
+          'Issue:',
+          data.issue || '-'
+        ].join('\n')
+      : [
+          'New contact message from the website.',
+          '',
+          `Name: ${data.name || '-'}`,
+          `Email: ${data.email || '-'}`,
+          `Phone: ${data.phone || '-'}`,
+          `Subject: ${data.subject || '-'}`,
+          '',
+          'Message:',
+          data.message || '-'
+        ].join('\n');
+
+  return {
+    access_key: window.FORM_CONFIG.accessKey,
+    subject,
+    from_name: data.name || 'Website Visitor',
+    email: data.email || window.FORM_CONFIG.toEmail,
+    message,
+    form_type: formType,
+    ...data
+  };
+}
+
+function showFormError(form, message) {
+  let errorEl = form.parentElement.querySelector('.form-error');
+
+  if (!errorEl) {
+    errorEl = document.createElement('div');
+    errorEl.className = 'form-error';
+    errorEl.setAttribute('role', 'alert');
+    form.parentElement.insertBefore(errorEl, form.nextSibling);
+  }
+
+  errorEl.textContent = message;
+  errorEl.classList.add('show');
+}
+
+function hideFormError(form) {
+  const errorEl = form.parentElement.querySelector('.form-error');
+  if (errorEl) {
+    errorEl.classList.remove('show');
+  }
+}
+
+function showFormSuccess(form) {
+  const successMsg = form.parentElement.querySelector('.form-success');
+
+  if (successMsg) {
+    form.classList.add('hidden');
+    successMsg.classList.add('show');
+    return;
+  }
+
+  const btn = form.querySelector('button[type="submit"]');
+  const originalHtml = btn.innerHTML;
+  btn.innerHTML = '<i class="fas fa-check"></i> Sent Successfully!';
+  btn.style.background = '#16a34a';
+  form.reset();
+
+  setTimeout(() => {
+    btn.innerHTML = originalHtml;
+    btn.style.background = '';
+  }, 3000);
+}
+
+async function handleFormSubmit(form) {
+  hideFormError(form);
+
+  if (!isFormConfigured()) {
+    showFormError(
+      form,
+      'Form email is not configured yet. Add your Web3Forms access key in js/form-config.js.'
+    );
+    return;
+  }
+
+  const btn = form.querySelector('button[type="submit"]');
+  const originalHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+  try {
+    const response = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      body: JSON.stringify(getFormPayload(form))
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      throw new Error(result.message || 'Unable to send your request. Please try again.');
+    }
+
+    showFormSuccess(form);
+  } catch (error) {
+    showFormError(
+      form,
+      error.message || 'Something went wrong. Please call us or try again later.'
+    );
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalHtml;
+  }
 }
 
 /* ---- Active Nav Highlight (single-page sections) ---- */

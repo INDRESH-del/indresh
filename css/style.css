@@ -186,7 +186,84 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 0.875rem;
 }
 
-/* ---- Header & Navigation ---- */
+.btn-call {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #bbf7d0;
+  color: #047857;
+  padding: 7px 16px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.78rem;
+  border: 1px solid #bbf7d0;
+  transition: all var(--transition);
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(187, 247, 208, 0.4);
+}
+
+.btn-call i {
+  font-size: 0.75rem;
+}
+
+.btn-call:hover {
+  background: #a7f3d0;
+  border-color: #a7f3d0;
+  color: #047857;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(167, 243, 208, 0.5);
+}
+
+.btn-call--footer {
+  font-size: 0.7rem;
+  padding: 5px 12px;
+  gap: 4px;
+}
+
+.btn-call--footer i {
+  font-size: 0.65rem;
+}
+
+.btn-call--cta {
+  padding: 10px 22px;
+  font-size: 0.85rem;
+}
+
+.contact-card .btn-call {
+  margin-top: 0.35rem;
+}
+
+.contact-card a.btn-call {
+  color: #047857;
+  font-size: 0.72rem;
+  padding: 5px 12px;
+}
+
+.contact-card a.btn-call:hover {
+  color: #047857;
+}
+
+.footer-col .btn-call {
+  margin-top: 0.15rem;
+  background: #bbf7d0;
+  border-color: #bbf7d0;
+  color: #047857;
+}
+
+.footer-col .btn-call:hover {
+  background: #a7f3d0;
+  border-color: #a7f3d0;
+  color: #047857;
+}
+
+.footer-col ul a.btn-call {
+  color: #047857;
+}
+
+.footer-col ul a.btn-call:hover {
+  color: #047857;
+}
 header {
   position: sticky;
   top: 0;
@@ -223,18 +300,21 @@ header {
   white-space: nowrap;
 }
 
-.logo i {
-  color: var(--primary-light);
-}
-
-.logo span {
-  color: var(--primary-light);
-}
-
-.logo-icon {
-  width: 36px;
-  height: 36px;
+.logo-img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
   flex-shrink: 0;
+  border-radius: 50%;
+}
+
+.logo-img--sm {
+  width: 40px;
+  height: 40px;
+}
+
+.logo-text span {
+  color: var(--primary-light);
 }
 
 .logo-text {
@@ -1304,6 +1384,27 @@ form button[type="submit"] {
   display: block;
 }
 
+.form-error {
+  display: none;
+  margin-top: 1rem;
+  padding: 0.875rem 1rem;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.form-error.show {
+  display: block;
+}
+
+form button[type="submit"]:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
 form.hidden {
   display: none;
 }
@@ -1598,7 +1699,7 @@ form.hidden {
 .page-header {
   position: relative;
   overflow: hidden;
-  background: #030712;
+  background: #1e293b;
   color: #fff;
   padding: 5rem 5% 4.5rem;
   text-align: center;
@@ -1635,14 +1736,14 @@ form.hidden {
   position: absolute;
   inset: -60%;
   background:
-    radial-gradient(circle at 18% 28%, rgba(139, 92, 246, 0.65) 0%, transparent 48%),
-    radial-gradient(circle at 78% 18%, rgba(6, 182, 212, 0.6) 0%, transparent 46%),
-    radial-gradient(circle at 82% 72%, rgba(236, 72, 153, 0.55) 0%, transparent 50%),
-    radial-gradient(circle at 12% 78%, rgba(59, 130, 246, 0.6) 0%, transparent 46%),
-    radial-gradient(circle at 48% 52%, rgba(168, 85, 247, 0.4) 0%, transparent 58%),
-    radial-gradient(circle at 62% 38%, rgba(34, 211, 238, 0.35) 0%, transparent 42%);
+    radial-gradient(circle at 18% 28%, rgba(139, 92, 246, 0.42) 0%, transparent 48%),
+    radial-gradient(circle at 78% 18%, rgba(6, 182, 212, 0.38) 0%, transparent 46%),
+    radial-gradient(circle at 82% 72%, rgba(236, 72, 153, 0.35) 0%, transparent 50%),
+    radial-gradient(circle at 12% 78%, rgba(59, 130, 246, 0.38) 0%, transparent 46%),
+    radial-gradient(circle at 48% 52%, rgba(168, 85, 247, 0.28) 0%, transparent 58%),
+    radial-gradient(circle at 62% 38%, rgba(34, 211, 238, 0.25) 0%, transparent 42%);
   filter: blur(48px);
-  animation: headerMeshShift 16s ease-in-out infinite alternate;
+  animation: headerMeshShift 8s ease-in-out infinite alternate;
 }
 
 .page-header-effects::after {
@@ -1650,8 +1751,8 @@ form.hidden {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(180deg, rgba(3, 7, 18, 0.45) 0%, rgba(0, 33, 71, 0.72) 100%),
-    radial-gradient(ellipse 120% 80% at 50% 100%, rgba(0, 5, 10, 0.55), transparent 70%);
+    linear-gradient(180deg, rgba(15, 23, 42, 0.2) 0%, rgba(30, 58, 95, 0.38) 100%),
+    radial-gradient(ellipse 120% 80% at 50% 100%, rgba(15, 23, 42, 0.25), transparent 70%);
 }
 
 .page-header-inner {
@@ -1669,7 +1770,7 @@ form.hidden {
   opacity: 0.7;
   transform-style: preserve-3d;
   will-change: transform;
-  animation: orbFloat 9s ease-in-out infinite;
+  animation: orbFloat 5s ease-in-out infinite;
 }
 
 .orb-1 {
@@ -1679,7 +1780,7 @@ form.hidden {
   left: 12%;
   background: radial-gradient(circle at 35% 30%, #c4b5fd, #7c3aed 55%, transparent 75%);
   box-shadow: 0 0 90px rgba(139, 92, 246, 0.7);
-  animation-duration: 11s;
+  animation-duration: 5.5s;
 }
 
 .orb-2 {
@@ -1689,8 +1790,8 @@ form.hidden {
   right: 10%;
   background: radial-gradient(circle at 40% 35%, #67e8f9, #0891b2 55%, transparent 75%);
   box-shadow: 0 0 80px rgba(6, 182, 212, 0.65);
-  animation-duration: 8s;
-  animation-delay: -2s;
+  animation-duration: 4s;
+  animation-delay: -1s;
 }
 
 .orb-3 {
@@ -1700,8 +1801,8 @@ form.hidden {
   left: 28%;
   background: radial-gradient(circle at 30% 40%, #f9a8d4, #db2777 55%, transparent 75%);
   box-shadow: 0 0 70px rgba(236, 72, 153, 0.6);
-  animation-duration: 10s;
-  animation-delay: -4s;
+  animation-duration: 4.5s;
+  animation-delay: -2s;
 }
 
 .orb-4 {
@@ -1711,8 +1812,8 @@ form.hidden {
   right: 28%;
   background: radial-gradient(circle at 45% 30%, #93c5fd, #2563eb 55%, transparent 75%);
   box-shadow: 0 0 65px rgba(59, 130, 246, 0.6);
-  animation-duration: 7s;
-  animation-delay: -1s;
+  animation-duration: 3.5s;
+  animation-delay: -0.5s;
 }
 
 .orb-5 {
@@ -1722,8 +1823,8 @@ form.hidden {
   right: 38%;
   background: radial-gradient(circle at 50% 40%, #5eead4, #0d9488 55%, transparent 75%);
   box-shadow: 0 0 55px rgba(45, 212, 191, 0.55);
-  animation-duration: 12s;
-  animation-delay: -6s;
+  animation-duration: 6s;
+  animation-delay: -3s;
 }
 
 @keyframes headerMeshShift {
@@ -1766,11 +1867,15 @@ form.hidden {
 @keyframes orbFloatMobile {
   0%,
   100% {
-    transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
   }
 
-  50% {
-    transform: translate3d(10px, -12px, 20px) rotateX(10deg) rotateY(8deg) scale(1.04);
+  33% {
+    transform: translate3d(16px, -18px, 0) scale(1.06);
+  }
+
+  66% {
+    transform: translate3d(-14px, 16px, 0) scale(0.96);
   }
 }
 
@@ -1783,17 +1888,20 @@ form.hidden {
   .page-header-effects::before {
     filter: blur(36px);
     inset: -40%;
+    animation: headerMeshShift 6s ease-in-out infinite alternate;
   }
 
   .page-header-effects::after {
     background:
-      linear-gradient(180deg, rgba(3, 7, 18, 0.3) 0%, rgba(0, 33, 71, 0.6) 100%),
-      radial-gradient(ellipse 120% 80% at 50% 100%, rgba(0, 5, 10, 0.4), transparent 70%);
+      linear-gradient(180deg, rgba(15, 23, 42, 0.15) 0%, rgba(30, 58, 95, 0.32) 100%),
+      radial-gradient(ellipse 120% 80% at 50% 100%, rgba(15, 23, 42, 0.2), transparent 70%);
   }
 
   .orb {
-    opacity: 0.85;
+    opacity: 0.9;
     animation-name: orbFloatMobile;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
   }
 
   .orb-1 {
@@ -1802,6 +1910,7 @@ form.hidden {
     top: 6%;
     left: 4%;
     box-shadow: 0 0 60px rgba(139, 92, 246, 0.75);
+    animation-duration: 3.5s;
   }
 
   .orb-2 {
@@ -1810,6 +1919,8 @@ form.hidden {
     top: 52%;
     right: 4%;
     box-shadow: 0 0 55px rgba(6, 182, 212, 0.7);
+    animation-duration: 3s;
+    animation-delay: -0.8s;
   }
 
   .orb-3 {
@@ -1818,6 +1929,8 @@ form.hidden {
     bottom: 12%;
     left: 12%;
     box-shadow: 0 0 50px rgba(236, 72, 153, 0.65);
+    animation-duration: 3.2s;
+    animation-delay: -1.5s;
   }
 
   .orb-4 {
@@ -1826,6 +1939,8 @@ form.hidden {
     top: 18%;
     right: 12%;
     box-shadow: 0 0 45px rgba(59, 130, 246, 0.65);
+    animation-duration: 2.8s;
+    animation-delay: -0.5s;
   }
 
   .orb-5 {
@@ -1834,6 +1949,8 @@ form.hidden {
     bottom: 22%;
     right: 22%;
     box-shadow: 0 0 40px rgba(45, 212, 191, 0.6);
+    animation-duration: 4s;
+    animation-delay: -2s;
   }
 }
 
@@ -2004,15 +2121,19 @@ form.hidden {
 .service-detail-card ul li {
   color: var(--text-light);
   font-size: 0.875rem;
-  padding: 0.25rem 0;
+  padding: 0.35rem 0;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
+  text-align: left;
+  line-height: 1.5;
 }
 
 .service-detail-card ul li i {
   color: var(--primary);
   font-size: 0.75rem;
+  flex-shrink: 0;
+  margin-top: 0.2em;
 }
 
 /* ---- Team Section ---- */
@@ -2460,9 +2581,9 @@ footer {
   gap: 10px;
 }
 
-.footer-brand .logo i {
-  color: var(--primary-light);
-  font-size: 1.25rem;
+.footer-brand .logo-img {
+  width: 40px;
+  height: 40px;
 }
 
 .footer-brand .logo-chevron {
@@ -2552,21 +2673,47 @@ footer {
   color: rgba(255, 255, 255, 0.5);
 }
 
-/* ---- WhatsApp Button ---- */
+/* ---- Floating Call & WhatsApp Buttons ---- */
+.call-fab {
+  position: fixed;
+  bottom: 60px;
+  right: 24px;
+  width: 30px;
+  height: 30px;
+  background: #bbf7d0;
+  color: #047857;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 8px rgba(187, 247, 208, 0.5);
+  z-index: 999;
+  transition: all var(--transition);
+  animation: callPulse 2s infinite;
+}
+
+.call-fab:hover {
+  transform: scale(1.1);
+  background: #a7f3d0;
+  color: #047857;
+  box-shadow: 0 4px 12px rgba(167, 243, 208, 0.6);
+}
+
 .whatsapp {
   position: fixed;
   bottom: 24px;
   right: 24px;
-  width: 60px;
-  height: 60px;
+  width: 30px;
+  height: 30px;
   background: var(--success);
   color: #fff;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
-  box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(37, 211, 102, 0.4);
   z-index: 999;
   transition: all var(--transition);
   animation: pulse 2s infinite;
@@ -2612,6 +2759,36 @@ footer {
   transform: translateY(0);
 }
 
+@media (max-width: 768px) {
+  .fade-in,
+  .fade-in-left,
+  .fade-in-right {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .page-header-effects::before {
+    filter: blur(28px);
+    animation: headerMeshShift 5s ease-in-out infinite alternate;
+  }
+
+  .orb {
+    animation-name: orbFloatMobile;
+    animation-duration: 3s;
+    will-change: transform;
+  }
+
+  .whatsapp,
+  .call-fab {
+    animation: none;
+  }
+
+  .hero-badge {
+    backdrop-filter: none;
+  }
+}
+
 @media (min-width: 769px) {
   .fade-in-left {
     transform: translateX(-30px);
@@ -2648,6 +2825,15 @@ footer {
   }
   50% {
     box-shadow: 0 4px 25px rgba(37, 211, 102, 0.6);
+  }
+}
+
+@keyframes callPulse {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(187, 247, 208, 0.5);
+  }
+  50% {
+    box-shadow: 0 3px 12px rgba(167, 243, 208, 0.65);
   }
 }
 
@@ -2826,8 +3012,25 @@ footer {
   .trust-bar,
   .pricing,
   .testimonials {
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
     padding-left: 1.25rem;
     padding-right: 1.25rem;
+  }
+
+  .services + .services,
+  .services + .about,
+  .services + .cta {
+    padding-top: 1.5rem;
+  }
+
+  .section-subtitle {
+    margin-bottom: 2rem;
+  }
+
+  .page-header {
+    padding-top: 3rem;
+    padding-bottom: 2.5rem;
   }
 
   .service-grid,
@@ -2859,11 +3062,30 @@ footer {
 
   .service-detail-card {
     flex-direction: column;
-    text-align: center;
+    align-items: stretch;
+    padding: 1.5rem 1.25rem;
+  }
+
+  .service-detail-card > div:not(.service-detail-icon) {
+    width: 100%;
+    text-align: left;
+  }
+
+  .service-detail-card h3 {
+    text-align: left;
+  }
+
+  .service-detail-card p {
+    text-align: left;
+  }
+
+  .service-detail-card ul {
+    width: 100%;
+    text-align: left;
   }
 
   .service-detail-icon {
-    margin: 0 auto;
+    margin: 0 auto 0.75rem;
   }
 
   .org-footer {
@@ -2903,6 +3125,15 @@ footer {
 }
 
 @media (max-width: 576px) {
+  .service-detail-card {
+    padding: 1.25rem 1rem;
+  }
+
+  .service-detail-card p,
+  .service-detail-card ul li {
+    font-size: 0.85rem;
+  }
+
   .navbar {
     padding: 0 1rem;
   }
@@ -2915,6 +3146,12 @@ footer {
   .card--value > p,
   .card--service > p {
     padding: 0 1.25rem;
+    text-align: left;
+  }
+
+  .card--service .card-link {
+    margin-left: 1.25rem;
+    margin-right: 1.25rem;
   }
 
   .card--service .card-marked-area img {
@@ -2943,9 +3180,9 @@ footer {
     font-size: 0.8rem;
   }
 
-  .logo-icon {
-    width: 28px;
-    height: 28px;
+  .logo-img {
+    width: 32px;
+    height: 32px;
   }
 
   .page-header {
@@ -2991,10 +3228,18 @@ footer {
     padding-left: 0;
   }
 
+  .call-fab {
+    width: 26px;
+    height: 26px;
+    font-size: 0.7rem;
+    bottom: 48px;
+    right: 16px;
+  }
+
   .whatsapp {
-    width: 52px;
-    height: 52px;
-    font-size: 1.65rem;
+    width: 26px;
+    height: 26px;
+    font-size: 0.85rem;
     bottom: 16px;
     right: 16px;
   }
