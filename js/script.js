@@ -1,6 +1,7 @@
 /* Mumbai A2Z IT Solution - Main JavaScript */
 
 document.addEventListener('DOMContentLoaded', () => {
+  initPerformanceMode();
   initMobileNav();
   initSmoothScroll();
   initScrollAnimations();
@@ -11,6 +12,31 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollNav();
   initServiceCardImageFill();
 });
+
+/* ---- Performance / smooth scrolling ---- */
+function isPerfLite() {
+  return (
+    document.documentElement.classList.contains('perf-lite') ||
+    window.matchMedia('(max-width: 1024px)').matches ||
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
+}
+
+function initPerformanceMode() {
+  const root = document.documentElement;
+  const lite =
+    window.matchMedia('(max-width: 1024px)').matches ||
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+    window.matchMedia('(hover: none)').matches;
+
+  if (lite) {
+    root.classList.add('perf-lite');
+  }
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    root.classList.add('reduce-motion');
+  }
+}
 
 /* ---- Service Card Image Fill (blur backdrop, no crop) ---- */
 function initServiceCardImageFill() {
@@ -28,10 +54,10 @@ function initServiceCardImageFill() {
 
     const applyFill = () => {
       const src = img.currentSrc || img.src;
-      if (src) {
-        media.style.setProperty('--card-img-url', `url("${src}")`);
-        media.classList.add('has-image-fill');
-      }
+      if (!src || isPerfLite()) return;
+
+      media.style.setProperty('--card-img-url', `url("${src}")`);
+      media.classList.add('has-image-fill');
     };
 
     if (img.complete) {
@@ -75,7 +101,7 @@ function initSmoothScroll() {
       if (!target) return;
 
       e.preventDefault();
-      target.scrollIntoView({ behavior: 'smooth' });
+      target.scrollIntoView({ behavior: isPerfLite() ? 'auto' : 'smooth', block: 'start' });
     });
   });
 }
@@ -86,7 +112,7 @@ function initScrollAnimations() {
 
   if (!animatedElements.length) return;
 
-  if (window.matchMedia('(max-width: 768px)').matches) {
+  if (isPerfLite()) {
     animatedElements.forEach(el => el.classList.add('visible'));
     return;
   }
@@ -190,13 +216,23 @@ function initTestimonialSlider() {
 
   function resetInterval() {
     clearInterval(intervalId);
+    const delay = isPerfLite() ? 8000 : 5000;
     intervalId = setInterval(() => {
+      if (document.hidden) return;
       currentIndex = (currentIndex + 1) % testimonials.length;
       renderTestimonial(currentIndex);
-    }, 5000);
+    }, delay);
   }
 
-  box.style.transition = 'opacity 0.3s ease';
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      clearInterval(intervalId);
+    } else {
+      resetInterval();
+    }
+  });
+
+  box.style.transition = isPerfLite() ? 'opacity 0.2s ease' : 'opacity 0.3s ease';
   renderTestimonial(0);
   resetInterval();
 }
@@ -426,16 +462,16 @@ function initScrollNav() {
 }
 
 function scrollToTop() {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({ top: 0, behavior: isPerfLite() ? 'auto' : 'smooth' });
 }
 
 function scrollToMiddle() {
   const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-  window.scrollTo({ top: Math.max(0, maxScroll / 2), behavior: 'smooth' });
+  window.scrollTo({ top: Math.max(0, maxScroll / 2), behavior: isPerfLite() ? 'auto' : 'smooth' });
 }
 
 function scrollToBottom() {
-  window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+  window.scrollTo({ top: document.documentElement.scrollHeight, behavior: isPerfLite() ? 'auto' : 'smooth' });
 }
 
 /* ---- Active Nav Highlight (single-page sections) ---- */
