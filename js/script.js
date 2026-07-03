@@ -8,7 +8,39 @@ document.addEventListener('DOMContentLoaded', () => {
   initFaqAccordion();
   initFormHandlers();
   initNavHighlight();
+  initScrollNav();
+  initServiceCardImageFill();
 });
+
+/* ---- Service Card Image Fill (blur backdrop, no crop) ---- */
+function initServiceCardImageFill() {
+  document.querySelectorAll('.card--service .card-marked-area').forEach(area => {
+    const img = area.querySelector(':scope > img');
+    if (!img) return;
+
+    let media = area.querySelector('.card-marked-area__media');
+    if (!media) {
+      media = document.createElement('div');
+      media.className = 'card-marked-area__media';
+      area.insertBefore(media, img);
+      media.appendChild(img);
+    }
+
+    const applyFill = () => {
+      const src = img.currentSrc || img.src;
+      if (src) {
+        media.style.setProperty('--card-img-url', `url("${src}")`);
+        media.classList.add('has-image-fill');
+      }
+    };
+
+    if (img.complete) {
+      applyFill();
+    } else {
+      img.addEventListener('load', applyFill, { once: true });
+    }
+  });
+}
 
 /* ---- Mobile Navigation ---- */
 function initMobileNav() {
@@ -347,6 +379,63 @@ async function handleFormSubmit(form) {
     btn.disabled = false;
     btn.innerHTML = originalHtml;
   }
+}
+
+/* ---- Page Scroll Navigation ---- */
+function initScrollNav() {
+  if (document.querySelector('.scroll-nav')) return;
+
+  const nav = document.createElement('nav');
+  nav.className = 'scroll-nav';
+  nav.setAttribute('aria-label', 'Page scroll shortcuts');
+
+  const buttons = [
+    {
+      label: 'Scroll to top',
+      title: 'Go to top',
+      icon: 'fa-chevron-up',
+      action: scrollToTop
+    },
+    {
+      label: 'Scroll to middle',
+      title: 'Go to middle',
+      icon: 'fa-minus',
+      action: scrollToMiddle,
+      middle: true
+    },
+    {
+      label: 'Scroll to bottom',
+      title: 'Go to end',
+      icon: 'fa-chevron-down',
+      action: scrollToBottom
+    }
+  ];
+
+  buttons.forEach(({ label, title, icon, action, middle }) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = middle ? 'scroll-nav__btn scroll-nav__btn--middle' : 'scroll-nav__btn';
+    btn.setAttribute('aria-label', label);
+    btn.title = title;
+    btn.innerHTML = `<i class="fas ${icon}" aria-hidden="true"></i>`;
+    btn.addEventListener('click', action);
+    nav.appendChild(btn);
+  });
+
+  document.body.appendChild(nav);
+}
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function scrollToMiddle() {
+  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+  window.scrollTo({ top: Math.max(0, maxScroll / 2), behavior: 'smooth' });
+}
+
+function scrollToBottom() {
+  window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
 }
 
 /* ---- Active Nav Highlight (single-page sections) ---- */
