@@ -80,8 +80,8 @@ function initParticleBackground() {
     return {
       x: Math.random() * width,
       y: height * yRatio,
-      vx: (Math.random() - 0.5) * (lite ? 0.22 : 0.38),
-      vy: (Math.random() - 0.5) * (lite ? 0.22 : 0.38),
+      vx: (Math.random() - 0.5) * (lite ? 0.5 : 0.85),
+      vy: (Math.random() - 0.5) * (lite ? 0.5 : 0.85),
       r: Math.random() * 2.2 + 1.1,
       color: colors[Math.floor(Math.random() * colors.length)],
       alpha: Math.random() * 0.45 + 0.55
@@ -192,7 +192,7 @@ function initParticleBackground() {
 /* ---- Service Card Image Fill (blur backdrop, no crop) ---- */
 function initServiceCardImageFill() {
   document.querySelectorAll('.card--service .card-marked-area').forEach(area => {
-    const img = area.querySelector(':scope > img');
+    const img = area.querySelector('.card-marked-area__media img') || area.querySelector(':scope > img');
     if (!img) return;
 
     let media = area.querySelector('.card-marked-area__media');
