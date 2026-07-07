@@ -3099,6 +3099,20 @@ footer {
   color: #fff;
 }
 
+@media (max-width: 768px) {
+  .call-fab {
+    bottom: auto;
+    top: 36%;
+    right: 10px;
+  }
+
+  .whatsapp {
+    bottom: auto;
+    top: 68%;
+    right: 10px;
+  }
+}
+
 /* ---- Scroll Animations ---- */
 .fade-in {
   opacity: 0;
@@ -3741,8 +3755,9 @@ footer {
     width: 52px;
     height: 52px;
     font-size: 1.4rem;
-    bottom: 94px;
-    right: 16px;
+    bottom: auto;
+    top: 36%;
+    right: 10px;
   }
 
   .scroll-nav {
@@ -3764,8 +3779,9 @@ footer {
     width: 52px;
     height: 52px;
     font-size: 1.7rem;
-    bottom: 16px;
-    right: 16px;
+    bottom: auto;
+    top: 68%;
+    right: 10px;
   }
 
   .faq-question {
