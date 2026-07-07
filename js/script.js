@@ -528,40 +528,53 @@ function getFormPayload(form) {
     access_key: window.FORM_CONFIG.accessKey,
     subject,
     from_name: data.name || 'Website Visitor',
+    name: data.name || 'Website Visitor',
     email: data.email || window.FORM_CONFIG.toEmail,
     message,
-    form_type: formType,
-    ...data
+    phone: data.phone || '',
+    form_type: formType
   };
 }
 
 function showFormError(form, message) {
-  let errorEl = form.parentElement.querySelector('.form-error');
+  const wrapper = form.closest('.form-wrapper') || form.parentElement;
+  let errorEl = wrapper?.querySelector('.form-error');
 
-  if (!errorEl) {
+  if (!errorEl && wrapper) {
     errorEl = document.createElement('div');
     errorEl.className = 'form-error';
     errorEl.setAttribute('role', 'alert');
-    form.parentElement.insertBefore(errorEl, form.nextSibling);
+    wrapper.insertBefore(errorEl, form.nextSibling);
   }
+
+  if (!errorEl) return;
 
   errorEl.textContent = message;
   errorEl.classList.add('show');
 }
 
 function hideFormError(form) {
-  const errorEl = form.parentElement.querySelector('.form-error');
+  const wrapper = form.closest('.form-wrapper') || form.parentElement;
+  const errorEl = wrapper?.querySelector('.form-error');
   if (errorEl) {
     errorEl.classList.remove('show');
   }
 }
 
 function showFormSuccess(form) {
-  const successMsg = form.parentElement.querySelector('.form-success');
+  const wrapper = form.closest('.form-wrapper') || form.parentElement;
+  const successMsg = wrapper?.querySelector('.form-success');
 
-  if (successMsg) {
+  if (wrapper && successMsg) {
+    hideFormError(form);
     form.classList.add('hidden');
+    wrapper.classList.add('form-wrapper--success');
     successMsg.classList.add('show');
+    successMsg.setAttribute('role', 'status');
+    successMsg.setAttribute('aria-live', 'polite');
+    successMsg.setAttribute('tabindex', '-1');
+    successMsg.focus({ preventScroll: true });
+    successMsg.scrollIntoView({ behavior: isPerfLite() ? 'auto' : 'smooth', block: 'center' });
     return;
   }
 
@@ -610,6 +623,7 @@ async function handleFormSubmit(form) {
     }
 
     showFormSuccess(form);
+    form.reset();
   } catch (error) {
     showFormError(
       form,
