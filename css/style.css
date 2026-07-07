@@ -67,13 +67,20 @@ body {
   width: 100%;
   height: 100%;
   background-color: #030712;
+  contain: strict;
 }
 
 body > header,
-body > section,
 body > footer {
   position: relative;
   z-index: 1;
+}
+
+body > section {
+  position: relative;
+  z-index: 1;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
 }
 
 body::before {
@@ -2008,7 +2015,6 @@ form.hidden {
   border-radius: 50%;
   opacity: 0.7;
   transform-style: preserve-3d;
-  will-change: transform;
   animation: orbFloat 4s ease-in-out infinite;
 }
 
@@ -2127,7 +2133,7 @@ form.hidden {
   .page-header-effects::before {
     filter: blur(36px);
     inset: -40%;
-    animation: headerMeshShift 6s ease-in-out infinite alternate;
+    animation: none;
   }
 
   .page-header-effects::after {
@@ -2138,9 +2144,8 @@ form.hidden {
 
   .orb {
     opacity: 0.9;
-    animation-name: orbFloatMobile;
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: infinite;
+    animation: none;
+    transform: none;
   }
 
   .orb-1 {
@@ -3108,7 +3113,7 @@ footer {
   z-index: 999;
   transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
   animation: fabPulseCall 2.2s ease-in-out infinite;
-  will-change: transform;
+  contain: layout style paint;
 }
 
 .call-fab:hover {
@@ -3137,7 +3142,7 @@ footer {
   transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
   animation: fabPulseWhatsApp 2.2s ease-in-out infinite;
   animation-delay: 0.4s;
-  will-change: transform;
+  contain: layout style paint;
 }
 
 .whatsapp:hover {
@@ -3216,13 +3221,12 @@ footer {
 
   .page-header-effects::before {
     filter: blur(28px);
-    animation: headerMeshShift 5s ease-in-out infinite alternate;
+    animation: none;
   }
 
   .orb {
-    animation-name: orbFloatMobile;
-    animation-duration: 3s;
-    will-change: transform;
+    animation: none;
+    transform: none;
   }
 
   .whatsapp,
@@ -3887,8 +3891,13 @@ html.fast-scroll body::after {
 html.is-scrolling .call-fab,
 html.is-scrolling .whatsapp,
 html.is-scrolling .orb,
-html.is-scrolling .page-header-effects::before {
+html.is-scrolling .page-header-effects::before,
+html.is-scrolling #particles-bg {
   animation-play-state: paused;
+}
+
+html.is-scrolling #particles-bg {
+  visibility: hidden;
 }
 
 html.fast-scroll .fade-in,
@@ -3910,7 +3919,14 @@ html.fast-scroll .page-header-effects::before {
 }
 
 html.fast-scroll .orb {
-  will-change: transform;
+  animation: none;
+  transform: none;
+}
+
+html.fast-scroll .section-title-3d,
+html.fast-scroll .contact-heading-3d,
+html.fast-scroll .footer-logo-center__text {
+  filter: none;
 }
 
 html.fast-scroll .card--service .card-marked-area__media.has-image-fill::before {
@@ -3972,7 +3988,8 @@ html.fast-scroll .card {
   }
 
   .orb {
-    will-change: transform;
+    animation: none;
+    transform: none;
   }
 
   .hero {

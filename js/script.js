@@ -2,6 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   initPerformanceMode();
+  initScrollPerformance();
   initParticleBackground();
   initMobileNav();
   initSmoothScroll();
@@ -44,35 +45,87 @@ function initPerformanceMode() {
   document.body.style.overflow = '';
 }
 
+/* ---- Scroll performance: pause heavy effects while scrolling ---- */
+const scrollPerf = {
+  isScrolling: false,
+  onScrollStart: null,
+  onScrollEnd: null
+};
+
+function initScrollPerformance() {
+  const root = document.documentElement;
+  let scrollStopTimer = 0;
+
+  const onScroll = () => {
+    if (!scrollPerf.isScrolling) {
+      scrollPerf.isScrolling = true;
+      root.classList.add('is-scrolling');
+      if (typeof scrollPerf.onScrollStart === 'function') {
+        scrollPerf.onScrollStart();
+      }
+    }
+
+    clearTimeout(scrollStopTimer);
+    scrollStopTimer = window.setTimeout(() => {
+      scrollPerf.isScrolling = false;
+      root.classList.remove('is-scrolling');
+      if (typeof scrollPerf.onScrollEnd === 'function') {
+        scrollPerf.onScrollEnd();
+      }
+    }, 150);
+  };
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('touchmove', onScroll, { passive: true });
+}
+
 /* ---- Animated particle network background ---- */
 function initParticleBackground() {
   if (document.getElementById('particles-bg')) return;
+
+  const lite = isPerfLite();
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (lite || reducedMotion) {
+    return;
+  }
 
   const canvas = document.createElement('canvas');
   canvas.id = 'particles-bg';
   canvas.setAttribute('aria-hidden', 'true');
   document.body.prepend(canvas);
 
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d', { alpha: false });
   if (!ctx) return;
 
-  const lite = isPerfLite();
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const particleCount = lite ? 16 : 28;
-  const connectDistance = lite ? 85 : 105;
+  const particleCount = 18;
+  const connectDistance = 95;
   const colors = ['#06b6d4', '#67e8f9', '#afd2fc', '#a855f7', '#ec4899', '#84cc16', '#9bdefb'];
 
   let width = 0;
   let height = 0;
   let particles = [];
   let animationId = 0;
-  let isScrolling = false;
-  let scrollStopTimer = 0;
-  let frameSkip = 0;
+  let isRunning = false;
+  let lastFrameTime = 0;
+  const frameInterval = 1000 / 30;
+
+  scrollPerf.onScrollStart = stopAnimation;
+  scrollPerf.onScrollEnd = () => {
+    if (!document.hidden) {
+      startAnimation();
+    }
+  };
 
   function resize() {
-    width = canvas.width = window.innerWidth;
-    height = canvas.height = window.innerHeight;
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = Math.floor(width * dpr);
+    canvas.height = Math.floor(height * dpr);
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
   function createParticle() {
@@ -80,17 +133,39 @@ function initParticleBackground() {
     return {
       x: Math.random() * width,
       y: height * yRatio,
-      vx: (Math.random() - 0.5) * (lite ? 0.5 : 0.85),
-      vy: (Math.random() - 0.5) * (lite ? 0.5 : 0.85),
-      r: Math.random() * 2.2 + 1.1,
+      vx: (Math.random() - 0.5) * 0.7,
+      vy: (Math.random() - 0.5) * 0.7,
+      r: Math.random() * 2 + 1,
       color: colors[Math.floor(Math.random() * colors.length)],
-      alpha: Math.random() * 0.45 + 0.55
+      alpha: Math.random() * 0.4 + 0.5
     };
   }
 
   function resetParticles() {
     resize();
     particles = Array.from({ length: particleCount }, createParticle);
+    drawStaticFrame();
+  }
+
+  function drawStaticFrame() {
+    ctx.fillStyle = '#030712';
+    ctx.fillRect(0, 0, width, height);
+
+    const topFade = ctx.createLinearGradient(0, 0, 0, height);
+    topFade.addColorStop(0, 'rgba(3, 7, 18, 0)');
+    topFade.addColorStop(0.5, 'rgba(6, 182, 212, 0.03)');
+    topFade.addColorStop(1, 'rgba(6, 182, 212, 0.08)');
+    ctx.fillStyle = topFade;
+    ctx.fillRect(0, 0, width, height);
+
+    particles.forEach(p => {
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.alpha;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    });
   }
 
   function draw() {
@@ -105,25 +180,22 @@ function initParticleBackground() {
     ctx.fillRect(0, 0, width, height);
 
     particles.forEach(p => {
-      if (!reducedMotion) {
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0 || p.x > width) p.vx *= -1;
-        if (p.y < height * 0.22 || p.y > height) p.vy *= -1;
-      }
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0 || p.x > width) p.vx *= -1;
+      if (p.y < height * 0.22 || p.y > height) p.vy *= -1;
     });
 
+    const maxDistSq = connectDistance * connectDistance;
+    ctx.lineWidth = 0.55;
     for (let i = 0; i < particles.length; i++) {
       for (let j = i + 1; j < particles.length; j++) {
         const dx = particles[i].x - particles[j].x;
         const dy = particles[i].y - particles[j].y;
         const distSq = dx * dx + dy * dy;
-        const maxDistSq = connectDistance * connectDistance;
         if (distSq < maxDistSq) {
-          const dist = Math.sqrt(distSq);
-          const opacity = (1 - dist / connectDistance) * 0.32;
+          const opacity = (1 - Math.sqrt(distSq) / connectDistance) * 0.28;
           ctx.strokeStyle = `rgba(34, 211, 238, ${opacity})`;
-          ctx.lineWidth = 0.55;
           ctx.beginPath();
           ctx.moveTo(particles[i].x, particles[i].y);
           ctx.lineTo(particles[j].x, particles[j].y);
@@ -142,49 +214,58 @@ function initParticleBackground() {
     });
   }
 
-  function animate() {
-    if (!reducedMotion) {
-      if (isScrolling) {
-        frameSkip += 1;
-        if (frameSkip % 4 !== 0) {
-          animationId = requestAnimationFrame(animate);
-          return;
-        }
-      } else {
-        frameSkip = 0;
-      }
-      draw();
-      animationId = requestAnimationFrame(animate);
+  function animate(timestamp) {
+    animationId = 0;
+    isRunning = false;
+
+    if (document.hidden || scrollPerf.isScrolling) {
+      return;
     }
+
+    if (timestamp - lastFrameTime < frameInterval) {
+      startAnimation();
+      return;
+    }
+
+    lastFrameTime = timestamp;
+    draw();
+    startAnimation();
+  }
+
+  function startAnimation() {
+    if (isRunning || document.hidden || scrollPerf.isScrolling) return;
+    isRunning = true;
+    animationId = requestAnimationFrame(animate);
+  }
+
+  function stopAnimation() {
+    if (animationId) {
+      cancelAnimationFrame(animationId);
+      animationId = 0;
+    }
+    isRunning = false;
   }
 
   resetParticles();
-  animate();
-
-  window.addEventListener(
-    'scroll',
-    () => {
-      isScrolling = true;
-      clearTimeout(scrollStopTimer);
-      scrollStopTimer = setTimeout(() => {
-        isScrolling = false;
-      }, 120);
-    },
-    { passive: true }
-  );
+  startAnimation();
 
   let resizeTimer;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(resetParticles, 200);
+    resizeTimer = setTimeout(() => {
+      stopAnimation();
+      resetParticles();
+      if (!scrollPerf.isScrolling && !document.hidden) {
+        startAnimation();
+      }
+    }, 200);
   });
 
   document.addEventListener('visibilitychange', () => {
-    if (reducedMotion) return;
     if (document.hidden) {
-      cancelAnimationFrame(animationId);
-    } else {
-      animate();
+      stopAnimation();
+    } else if (!scrollPerf.isScrolling) {
+      startAnimation();
     }
   });
 }
