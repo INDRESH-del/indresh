@@ -3044,7 +3044,7 @@ footer {
 /* ---- Floating Call & WhatsApp Buttons ---- */
 .call-fab {
   position: fixed;
-  bottom: 96px;
+  bottom: 118px;
   right: 24px;
   width: 60px;
   height: 60px;
@@ -3057,15 +3057,17 @@ footer {
   font-size: 1.7rem;
   box-shadow: 0 4px 16px rgba(187, 247, 208, 0.5);
   z-index: 999;
-  transition: all var(--transition);
-  animation: callPulse 2s infinite;
+  transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
+  animation: fabPulseCall 2.2s ease-in-out infinite;
+  will-change: transform;
 }
 
 .call-fab:hover {
-  transform: scale(1.1);
-  background: #a7f3d0;
-  color: #047857;
-  box-shadow: 0 4px 12px rgba(167, 243, 208, 0.6);
+  animation-play-state: paused;
+  transform: scale(1.15);
+  background: #6ee7b7;
+  color: #064e3b;
+  box-shadow: 0 8px 28px rgba(110, 231, 183, 0.75), 0 0 0 6px rgba(110, 231, 183, 0.25);
 }
 
 .whatsapp {
@@ -3083,13 +3085,17 @@ footer {
   font-size: 2rem;
   box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4);
   z-index: 999;
-  transition: all var(--transition);
-  animation: pulse 2s infinite;
+  transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+  animation: fabPulseWhatsApp 2.2s ease-in-out infinite;
+  animation-delay: 0.4s;
+  will-change: transform;
 }
 
 .whatsapp:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+  animation-play-state: paused;
+  transform: scale(1.15);
+  background: #16a34a;
+  box-shadow: 0 8px 28px rgba(37, 211, 102, 0.7), 0 0 0 6px rgba(37, 211, 102, 0.25);
   color: #fff;
 }
 
@@ -3149,7 +3155,7 @@ footer {
 
   .whatsapp,
   .call-fab {
-    animation: none;
+    animation-duration: 2.2s;
   }
 
   .hero-badge {
@@ -3209,21 +3215,35 @@ footer {
   }
 }
 
-@keyframes pulse {
-  0%, 100% {
-    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+@keyframes fabPulseCall {
+  0%,
+  100% {
+    transform: scale(1);
+    background: #bbf7d0;
+    color: #047857;
+    box-shadow: 0 4px 16px rgba(187, 247, 208, 0.5), 0 0 0 0 rgba(134, 239, 172, 0.35);
   }
+
   50% {
-    box-shadow: 0 4px 25px rgba(37, 211, 102, 0.6);
+    transform: scale(1.12);
+    background: #86efac;
+    color: #065f46;
+    box-shadow: 0 8px 26px rgba(134, 239, 172, 0.75), 0 0 0 10px rgba(134, 239, 172, 0.18);
   }
 }
 
-@keyframes callPulse {
-  0%, 100% {
-    box-shadow: 0 2px 8px rgba(187, 247, 208, 0.5);
+@keyframes fabPulseWhatsApp {
+  0%,
+  100% {
+    transform: scale(1);
+    background: #25d366;
+    box-shadow: 0 4px 16px rgba(37, 211, 102, 0.45), 0 0 0 0 rgba(37, 211, 102, 0.35);
   }
+
   50% {
-    box-shadow: 0 3px 12px rgba(167, 243, 208, 0.65);
+    transform: scale(1.12);
+    background: #16a34a;
+    box-shadow: 0 8px 26px rgba(37, 211, 102, 0.7), 0 0 0 10px rgba(37, 211, 102, 0.2);
   }
 }
 
@@ -3721,7 +3741,7 @@ footer {
     width: 52px;
     height: 52px;
     font-size: 1.4rem;
-    bottom: 78px;
+    bottom: 94px;
     right: 16px;
   }
 
@@ -3898,7 +3918,7 @@ html.perf-lite .card {
 
 html.perf-lite .whatsapp,
 html.perf-lite .call-fab {
-  animation: none;
+  animation-duration: 2.6s;
 }
 
 a,
