@@ -58,8 +58,8 @@ function initParticleBackground() {
 
   const lite = isPerfLite();
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const particleCount = lite ? 28 : 42;
-  const connectDistance = lite ? 95 : 120;
+  const particleCount = lite ? 16 : 28;
+  const connectDistance = lite ? 85 : 105;
   const colors = ['#06b6d4', '#67e8f9', '#afd2fc', '#a855f7', '#ec4899', '#84cc16', '#9bdefb'];
 
   let width = 0;
@@ -146,7 +146,7 @@ function initParticleBackground() {
     if (!reducedMotion) {
       if (isScrolling) {
         frameSkip += 1;
-        if (frameSkip % 3 !== 0) {
+        if (frameSkip % 4 !== 0) {
           animationId = requestAnimationFrame(animate);
           return;
         }
@@ -271,8 +271,45 @@ function initMobileNav() {
 }
 
 /* ---- Smooth Scrolling ---- */
+function getScrollOffset() {
+  const value = getComputedStyle(document.documentElement).scrollPaddingTop;
+  const parsed = parseInt(value, 10);
+  return Number.isFinite(parsed) ? parsed : 72;
+}
+
 function smoothScrollTo(top) {
-  window.scrollTo({ top, behavior: 'smooth' });
+  const target = Math.max(0, Math.min(top, document.documentElement.scrollHeight - window.innerHeight));
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (prefersReduced || Math.abs(window.scrollY - target) < 2) {
+    window.scrollTo(0, target);
+    return;
+  }
+
+  const start = window.scrollY;
+  const distance = target - start;
+  const duration = isPerfLite()
+    ? Math.min(280, Math.max(160, Math.abs(distance) * 0.22))
+    : Math.min(420, Math.max(220, Math.abs(distance) * 0.28));
+  let startTime = null;
+
+  function step(timestamp) {
+    if (!startTime) startTime = timestamp;
+    const progress = Math.min((timestamp - startTime) / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    window.scrollTo(0, start + distance * ease);
+    if (progress < 1) {
+      requestAnimationFrame(step);
+    }
+  }
+
+  requestAnimationFrame(step);
+}
+
+function scrollToElement(target) {
+  const offset = getScrollOffset();
+  const top = target.getBoundingClientRect().top + window.scrollY - offset;
+  smoothScrollTo(top);
 }
 
 function initSmoothScroll() {
@@ -285,7 +322,7 @@ function initSmoothScroll() {
       if (!target) return;
 
       e.preventDefault();
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      scrollToElement(target);
     });
   });
 }

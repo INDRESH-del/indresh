@@ -42,6 +42,7 @@ html {
   background-color: #030712;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 
 body {
@@ -55,6 +56,7 @@ body {
   overflow-x: hidden;
   width: 100%;
   max-width: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 
 #particles-bg {
@@ -2891,11 +2893,12 @@ footer {
 
 .footer-services-list {
   display: flex;
+  align-items: flex-start;
   gap: 1.25rem;
 }
 
 .footer-services-list > ul {
-  flex: 1;
+  flex: 1 1 0;
   min-width: 0;
 }
 
@@ -2999,13 +3002,15 @@ footer {
 /* ---- Page Scroll Navigation Arrows ---- */
 .scroll-nav {
   position: fixed;
-  left: 20px;
-  top: 50%;
-  transform: translateY(-50%);
+  left: auto;
+  right: 31px;
+  top: auto;
+  bottom: 100px;
+  transform: none;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  z-index: 998;
+  z-index: 999;
 }
 
 .scroll-nav__btn {
@@ -3044,7 +3049,7 @@ footer {
 /* ---- Floating Call & WhatsApp Buttons ---- */
 .call-fab {
   position: fixed;
-  bottom: 118px;
+  bottom: 266px;
   right: 24px;
   width: 60px;
   height: 60px;
@@ -3100,15 +3105,24 @@ footer {
 }
 
 @media (max-width: 768px) {
-  .call-fab {
-    bottom: auto;
-    top: 36%;
+  .whatsapp {
+    top: auto;
+    bottom: 16px;
     right: 10px;
   }
 
-  .whatsapp {
-    bottom: auto;
-    top: 68%;
+  .scroll-nav {
+    left: auto;
+    right: 17px;
+    top: auto;
+    bottom: 84px;
+    transform: none;
+    gap: 10px;
+  }
+
+  .call-fab {
+    top: auto;
+    bottom: 234px;
     right: 10px;
   }
 }
@@ -3755,14 +3769,18 @@ footer {
     width: 52px;
     height: 52px;
     font-size: 1.4rem;
-    bottom: auto;
-    top: 36%;
+    top: auto;
+    bottom: 234px;
     right: 10px;
   }
 
   .scroll-nav {
-    left: 12px;
-    gap: 8px;
+    left: auto;
+    right: 17px;
+    top: auto;
+    bottom: 84px;
+    transform: none;
+    gap: 10px;
   }
 
   .scroll-nav__btn {
@@ -3779,8 +3797,8 @@ footer {
     width: 52px;
     height: 52px;
     font-size: 1.7rem;
-    bottom: auto;
-    top: 68%;
+    top: auto;
+    bottom: 16px;
     right: 10px;
   }
 
@@ -3815,6 +3833,18 @@ html.fast-scroll {
 html.fast-scroll body {
   background-attachment: scroll;
   -webkit-overflow-scrolling: touch;
+}
+
+html.fast-scroll body::before,
+html.fast-scroll body::after {
+  display: none;
+}
+
+html.is-scrolling .call-fab,
+html.is-scrolling .whatsapp,
+html.is-scrolling .orb,
+html.is-scrolling .page-header-effects::before {
+  animation-play-state: paused;
 }
 
 html.fast-scroll .fade-in,
@@ -3854,6 +3884,18 @@ html.fast-scroll .about-story-item:hover {
 
 html.fast-scroll #particles-bg {
   will-change: auto;
+}
+
+html.fast-scroll header,
+html.fast-scroll .trust-bar,
+html.fast-scroll .about,
+html.fast-scroll .booking,
+html.fast-scroll .contact-section,
+html.fast-scroll .faq,
+html.fast-scroll .form-wrapper,
+html.fast-scroll .card {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 /* ---- Wallpaper visible: text readability ---- */
