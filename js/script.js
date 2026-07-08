@@ -95,7 +95,7 @@ function initParticleBackground() {
   const ctx = canvas.getContext('2d', { alpha: false });
   if (!ctx) return;
 
-  const particleCount = lite ? 16 : 24;
+  const particleCount = lite ? 32 : 48;
   const connectDistance = lite ? 100 : 120;
   const drawConnections = true;
   const colors = ['#06b6d4', '#67e8f9', '#afd2fc', '#a855f7', '#ec4899', '#84cc16', '#9bdefb'];
