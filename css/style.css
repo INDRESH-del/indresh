@@ -2133,7 +2133,7 @@ form.hidden {
   .page-header-effects::before {
     filter: blur(36px);
     inset: -40%;
-    animation: none;
+    animation: headerMeshShift 6s ease-in-out infinite alternate;
   }
 
   .page-header-effects::after {
@@ -2144,8 +2144,9 @@ form.hidden {
 
   .orb {
     opacity: 0.9;
-    animation: none;
-    transform: none;
+    animation-name: orbFloatMobile;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
   }
 
   .orb-1 {
@@ -3221,12 +3222,12 @@ footer {
 
   .page-header-effects::before {
     filter: blur(28px);
-    animation: none;
+    animation: headerMeshShift 5s ease-in-out infinite alternate;
   }
 
   .orb {
-    animation: none;
-    transform: none;
+    animation-name: orbFloatMobile;
+    animation-duration: 3s;
   }
 
   .whatsapp,
@@ -3891,13 +3892,8 @@ html.fast-scroll body::after {
 html.is-scrolling .call-fab,
 html.is-scrolling .whatsapp,
 html.is-scrolling .orb,
-html.is-scrolling .page-header-effects::before,
-html.is-scrolling #particles-bg {
+html.is-scrolling .page-header-effects::before {
   animation-play-state: paused;
-}
-
-html.is-scrolling #particles-bg {
-  visibility: hidden;
 }
 
 html.fast-scroll .fade-in,
@@ -3911,16 +3907,6 @@ html.fast-scroll .fade-in-right {
 html.fast-scroll .hero,
 html.fast-scroll .hero-content {
   animation: none;
-}
-
-html.fast-scroll .page-header-effects::before {
-  animation: none;
-  filter: blur(28px);
-}
-
-html.fast-scroll .orb {
-  animation: none;
-  transform: none;
 }
 
 html.fast-scroll .section-title-3d,
@@ -3983,13 +3969,14 @@ html.fast-scroll .card {
   }
 
   .page-header-effects::before {
-    animation: none;
+    animation: headerMeshShift 6s ease-in-out infinite alternate;
     filter: blur(20px);
   }
 
   .orb {
-    animation: none;
-    transform: none;
+    animation-name: orbFloatMobile;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
   }
 
   .hero {

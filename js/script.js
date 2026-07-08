@@ -76,19 +76,16 @@ function initScrollPerformance() {
   };
 
   window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('touchmove', onScroll, { passive: true });
 }
 
 /* ---- Animated particle network background ---- */
 function initParticleBackground() {
   if (document.getElementById('particles-bg')) return;
 
-  const lite = isPerfLite();
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reducedMotion) return;
 
-  if (lite || reducedMotion) {
-    return;
-  }
+  const lite = isPerfLite();
 
   const canvas = document.createElement('canvas');
   canvas.id = 'particles-bg';
@@ -98,8 +95,9 @@ function initParticleBackground() {
   const ctx = canvas.getContext('2d', { alpha: false });
   if (!ctx) return;
 
-  const particleCount = 18;
-  const connectDistance = 95;
+  const particleCount = lite ? 16 : 24;
+  const connectDistance = lite ? 100 : 120;
+  const drawConnections = true;
   const colors = ['#06b6d4', '#67e8f9', '#afd2fc', '#a855f7', '#ec4899', '#84cc16', '#9bdefb'];
 
   let width = 0;
@@ -108,17 +106,19 @@ function initParticleBackground() {
   let animationId = 0;
   let isRunning = false;
   let lastFrameTime = 0;
-  const frameInterval = 1000 / 30;
+  const frameInterval = lite ? 1000 / 28 : 1000 / 36;
 
-  scrollPerf.onScrollStart = stopAnimation;
+  scrollPerf.onScrollStart = () => {
+    /* Keep loop alive; animate() skips draws while scrolling */
+  };
   scrollPerf.onScrollEnd = () => {
-    if (!document.hidden) {
+    if (!document.hidden && !isRunning) {
       startAnimation();
     }
   };
 
   function resize() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    const dpr = Math.min(window.devicePixelRatio || 1, lite ? 1.25 : 1.5);
     width = window.innerWidth;
     height = window.innerHeight;
     canvas.width = Math.floor(width * dpr);
@@ -129,12 +129,13 @@ function initParticleBackground() {
   }
 
   function createParticle() {
+    const speed = lite ? 1.05 : 1.45;
     const yRatio = 0.3 + Math.pow(Math.random(), 0.55) * 0.7;
     return {
       x: Math.random() * width,
       y: height * yRatio,
-      vx: (Math.random() - 0.5) * 0.7,
-      vy: (Math.random() - 0.5) * 0.7,
+      vx: (Math.random() - 0.5) * speed,
+      vy: (Math.random() - 0.5) * speed,
       r: Math.random() * 2 + 1,
       color: colors[Math.floor(Math.random() * colors.length)],
       alpha: Math.random() * 0.4 + 0.5
@@ -144,10 +145,9 @@ function initParticleBackground() {
   function resetParticles() {
     resize();
     particles = Array.from({ length: particleCount }, createParticle);
-    drawStaticFrame();
   }
 
-  function drawStaticFrame() {
+  function paintBackground() {
     ctx.fillStyle = '#030712';
     ctx.fillRect(0, 0, width, height);
 
@@ -157,27 +157,10 @@ function initParticleBackground() {
     topFade.addColorStop(1, 'rgba(6, 182, 212, 0.08)');
     ctx.fillStyle = topFade;
     ctx.fillRect(0, 0, width, height);
-
-    particles.forEach(p => {
-      ctx.fillStyle = p.color;
-      ctx.globalAlpha = p.alpha;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.globalAlpha = 1;
-    });
   }
 
   function draw() {
-    ctx.fillStyle = '#030712';
-    ctx.fillRect(0, 0, width, height);
-
-    const topFade = ctx.createLinearGradient(0, 0, 0, height);
-    topFade.addColorStop(0, 'rgba(3, 7, 18, 0)');
-    topFade.addColorStop(0.5, 'rgba(6, 182, 212, 0.03)');
-    topFade.addColorStop(1, 'rgba(6, 182, 212, 0.08)');
-    ctx.fillStyle = topFade;
-    ctx.fillRect(0, 0, width, height);
+    paintBackground();
 
     particles.forEach(p => {
       p.x += p.vx;
@@ -186,20 +169,22 @@ function initParticleBackground() {
       if (p.y < height * 0.22 || p.y > height) p.vy *= -1;
     });
 
-    const maxDistSq = connectDistance * connectDistance;
-    ctx.lineWidth = 0.55;
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i + 1; j < particles.length; j++) {
-        const dx = particles[i].x - particles[j].x;
-        const dy = particles[i].y - particles[j].y;
-        const distSq = dx * dx + dy * dy;
-        if (distSq < maxDistSq) {
-          const opacity = (1 - Math.sqrt(distSq) / connectDistance) * 0.28;
-          ctx.strokeStyle = `rgba(34, 211, 238, ${opacity})`;
-          ctx.beginPath();
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.stroke();
+    if (drawConnections) {
+      const maxDistSq = connectDistance * connectDistance;
+      ctx.lineWidth = 0.65;
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const distSq = dx * dx + dy * dy;
+          if (distSq < maxDistSq) {
+            const opacity = (1 - Math.sqrt(distSq) / connectDistance) * 0.38;
+            ctx.strokeStyle = `rgba(34, 211, 238, ${opacity})`;
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
         }
       }
     }
@@ -218,22 +203,31 @@ function initParticleBackground() {
     animationId = 0;
     isRunning = false;
 
-    if (document.hidden || scrollPerf.isScrolling) {
+    if (document.hidden) {
       return;
     }
 
-    if (timestamp - lastFrameTime < frameInterval) {
-      startAnimation();
-      return;
+    const shouldDraw = !scrollPerf.isScrolling;
+    const elapsed = timestamp - lastFrameTime;
+
+    if (shouldDraw && elapsed >= frameInterval) {
+      lastFrameTime = timestamp;
+      draw();
+    } else if (!shouldDraw && elapsed >= frameInterval * 2) {
+      lastFrameTime = timestamp;
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < height * 0.22 || p.y > height) p.vy *= -1;
+      });
     }
 
-    lastFrameTime = timestamp;
-    draw();
     startAnimation();
   }
 
   function startAnimation() {
-    if (isRunning || document.hidden || scrollPerf.isScrolling) return;
+    if (isRunning || document.hidden) return;
     isRunning = true;
     animationId = requestAnimationFrame(animate);
   }
@@ -247,6 +241,7 @@ function initParticleBackground() {
   }
 
   resetParticles();
+  draw();
   startAnimation();
 
   let resizeTimer;
@@ -255,16 +250,15 @@ function initParticleBackground() {
     resizeTimer = setTimeout(() => {
       stopAnimation();
       resetParticles();
-      if (!scrollPerf.isScrolling && !document.hidden) {
-        startAnimation();
-      }
+      draw();
+      startAnimation();
     }, 200);
   });
 
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       stopAnimation();
-    } else if (!scrollPerf.isScrolling) {
+    } else {
       startAnimation();
     }
   });
